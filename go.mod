@@ -1,6 +1,6 @@
-module github.com/Lukaesebrot/dgc
+module github.com/Hofled/dgc
 
-go 1.14
+go 1.15
 
 require (
 	github.com/bwmarrin/discordgo v0.20.3
