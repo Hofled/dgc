@@ -101,15 +101,14 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 
 		var commandText string
 		var hasPrefix bool
+		var prefixes []string
 		// Check if the message starts with a command name
 		for _, command := range router.Commands {
 			commandText = parts[0]
+			prefixes = router.Prefixes
 
-			var prefixes []string
-			// Use router fallback prefixes if command specific prefixes were not specified
-			if len(command.Prefixes) == 0 {
-				prefixes = router.Prefixes
-			} else {
+			// Use command specific prefixes if any exist
+			if len(command.Prefixes) > 0 {
 				prefixes = command.Prefixes
 			}
 
@@ -117,7 +116,7 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 			if len(prefixes) > 0 {
 				hasPrefix, commandText = stringHasPrefix(commandText, prefixes, command.IgnoreCase)
 				if !hasPrefix {
-					return
+					continue
 				}
 			}
 
