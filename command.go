@@ -6,7 +6,9 @@ import (
 
 // Command represents a simple command
 type Command struct {
-	Name        string
+	Name string
+	// Prefixes Commnad specific prefixes
+	Prefixes    []string
 	Aliases     []string
 	Description string
 	Usage       string

@@ -4,13 +4,14 @@ import "strings"
 
 // stringHasPrefix checks whether or not the string contains one of the given prefixes and returns the string without the prefix
 func stringHasPrefix(str string, prefixes []string, ignoreCase bool) (bool, string) {
+	if ignoreCase {
+		str = strings.ToLower(str)
+	}
 	for _, prefix := range prefixes {
-		stringToCheck := str
 		if ignoreCase {
-			stringToCheck = strings.ToLower(stringToCheck)
 			prefix = strings.ToLower(prefix)
 		}
-		if strings.HasPrefix(stringToCheck, prefix) {
+		if strings.HasPrefix(str, prefix) {
 			return true, string(str[len(prefix):])
 		}
 	}

@@ -12,6 +12,7 @@ var regexSplitting = regexp.MustCompile("\\s+")
 
 // Router represents a DiscordGo command router
 type Router struct {
+	// Prefixes Default fallback prefixes
 	Prefixes         []string
 	IgnorePrefixCase bool
 	BotsAllowed      bool
@@ -87,11 +88,15 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 			return
 		}
 
-		// Check if the message starts with one of the defined prefixes
-		hasPrefix, content := stringHasPrefix(content, router.Prefixes, router.IgnorePrefixCase)
-		if !hasPrefix {
-			return
-		}
+		// var prefix string
+		// var hasPrefix bool
+		// if len(router.Prefixes) > 0 {
+		// 	// Check if the message starts with one of the defined prefixes
+		// 	hasPrefix, content, prefix = stringHasPrefix(content, router.Prefixes, router.IgnorePrefixCase)
+		// 	if !hasPrefix {
+		// 		return
+		// 	}
+		// }
 
 		// Get rid of additional spaces
 		content = strings.Trim(content, " ")
@@ -104,12 +109,35 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 		// Split the messages at any whitespace
 		parts := regexSplitting.Split(content, -1)
 
+		var commandText string
+		var hasPrefix bool
 		// Check if the message starts with a command name
 		for _, command := range router.Commands {
+			commandText = parts[0]
+
+			var prefixes []string
+			// Use router fallback prefixes if command specific prefixes were not specified
+			if len(command.Prefixes) == 0 {
+				prefixes = make([]string, len(router.Prefixes))
+				prefixes = append(prefixes, router.Prefixes...)
+			} else {
+				prefixes = make([]string, len(command.Prefixes))
+				prefixes = append(prefixes, command.Prefixes...)
+			}
+
+			// Check prefixes if any prefixes were specified
+			if len(prefixes) > 0 {
+				hasPrefix, commandText = stringHasPrefix(commandText, prefixes, command.IgnoreCase)
+				if !hasPrefix {
+					return
+				}
+			}
+
 			// Check if the first part is the current command
-			if !stringArrayContains(getIdentifiers(command), parts[0], command.IgnoreCase) {
+			if !stringArrayContains(getIdentifiers(command), commandText, command.IgnoreCase) {
 				continue
 			}
+
 			content = strings.Join(parts[1:], " ")
 
 			// Define the command context
