@@ -173,7 +173,13 @@ func renderDefaultGeneralHelpEmbed(router *Router, page int) (*discordgo.Message
 // renderDefaultSpecificHelpEmbed renders the specific help embed of the given command
 func renderDefaultSpecificHelpEmbed(ctx *Ctx, command *Command) *discordgo.MessageEmbed {
 	// Define useful variables
-	prefix := ctx.Router.Prefixes[0]
+	var prefixes []string
+	if len(command.Prefixes) > 0 {
+		prefixes = command.Prefixes
+	} else {
+		prefixes = []string{ctx.Router.Prefixes[0]}
+	}
+	prefixesStr := strings.Join(prefixes, "/")
 
 	// Check if the command is invalid
 	if command == nil {
@@ -185,7 +191,7 @@ func renderDefaultSpecificHelpEmbed(ctx *Ctx, command *Command) *discordgo.Messa
 			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name:   "Message",
-					Value:  "```The given command doesn't exist. Type `" + prefix + "help` for a list of available commands.```",
+					Value:  "```The given command doesn't exist. Type `" + ctx.Router.Prefixes[0] + "help` for a list of available commands.```",
 					Inline: false,
 				},
 			},
@@ -238,12 +244,12 @@ func renderDefaultSpecificHelpEmbed(ctx *Ctx, command *Command) *discordgo.Messa
 			},
 			{
 				Name:   "Usage",
-				Value:  "```" + prefix + command.Usage + "```",
+				Value:  "```" + prefixesStr + command.Usage + "```",
 				Inline: false,
 			},
 			{
 				Name:   "Example",
-				Value:  "```" + prefix + command.Example + "```",
+				Value:  "```" + prefixesStr + command.Example + "```",
 				Inline: false,
 			},
 		},
