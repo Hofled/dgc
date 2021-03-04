@@ -88,16 +88,6 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 			return
 		}
 
-		// var prefix string
-		// var hasPrefix bool
-		// if len(router.Prefixes) > 0 {
-		// 	// Check if the message starts with one of the defined prefixes
-		// 	hasPrefix, content, prefix = stringHasPrefix(content, router.Prefixes, router.IgnorePrefixCase)
-		// 	if !hasPrefix {
-		// 		return
-		// 	}
-		// }
-
 		// Get rid of additional spaces
 		content = strings.Trim(content, " ")
 
@@ -118,11 +108,9 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 			var prefixes []string
 			// Use router fallback prefixes if command specific prefixes were not specified
 			if len(command.Prefixes) == 0 {
-				prefixes = make([]string, len(router.Prefixes))
-				prefixes = append(prefixes, router.Prefixes...)
+				prefixes = router.Prefixes
 			} else {
-				prefixes = make([]string, len(command.Prefixes))
-				prefixes = append(prefixes, command.Prefixes...)
+				prefixes = command.Prefixes
 			}
 
 			// Check prefixes if any prefixes were specified
