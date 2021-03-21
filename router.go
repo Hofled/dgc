@@ -145,7 +145,7 @@ func (router *Router) Handler() func(*discordgo.Session, *discordgo.MessageCreat
 
 func getIdentifiers(command *Command) []string {
 	// Define an array containing the commands name and the aliases
-	toCheck := make([]string, len(command.Aliases)+1)
+	toCheck := make([]string, 0)
 	toCheck = append(toCheck, command.Name)
 	toCheck = append(toCheck, command.Aliases...)
 	return toCheck
